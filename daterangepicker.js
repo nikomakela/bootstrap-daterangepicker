@@ -1,7 +1,14 @@
 /**
+* Custom version of Bootstrap daterangepicker
+* 
+* @author: Niko Mäkelä
+* @date: 2013-11-04
+* 
+* Forked from:
+* 
 * @version: 1.2
-* @author: Dan Grossman http://www.dangrossman.info/
-* @date: 2013-07-25
+* author: Dan Grossman http://www.dangrossman.info/
+* date: 2013-07-25
 * @copyright: Copyright (c) 2012-2013 Dan Grossman. All rights reserved.
 * @license: Licensed under Apache License v2.0. See http://www.apache.org/licenses/LICENSE-2.0
 * @website: http://www.improvely.com/
@@ -20,7 +27,7 @@
         this.maxDate = false;
         this.dateLimit = false;
         this.emptyDate = false;
-
+        this.cleared = false;
         this.showDropdowns = false;
         this.showWeekNumbers = false;
         this.timePicker = false;
@@ -31,11 +38,14 @@
         this.buttonClasses = ['btn', 'btn-small'];
         this.applyClass = 'btn-success';
         this.cancelClass = 'btn-default';
+        this.clearClass = 'btn-warning';
         this.format = 'MM/DD/YYYY';
         this.separator = ' - ';
+        
 
         this.locale = {
             applyLabel: 'Apply',
+            clearLabel: "Clear",
             cancelLabel: 'Cancel',
             fromLabel: 'From',
             toLabel: 'To',
@@ -81,9 +91,24 @@
                 this.applyClass = options.applyClass;
             }
 
-            if (options.cancelClass) {
-                this.cancelClass = options.cancelClass;
+            if (!options.hasOwnProperty('cancelButton') || options.cancelButton == true) {
+            	
+                if (options.cancelClass) {
+                    this.cancelClass = options.cancelClass;
+                }
+                
+                this.cancelButton = true;
             }
+            
+            if (!options.hasOwnProperty('clearButton') || options.clearButton == true) {
+            	
+                if (options.clearClass) {
+                    this.clearClass = options.clearClass;
+                }
+                
+                this.clearButton = true;
+            }
+
         }
 
         var DRPTemplate = '<div class="daterangepicker dropdown-menu">' +
@@ -99,9 +124,14 @@
                       '<label for="daterangepicker_end">' + this.locale.toLabel + '</label>' +
                       '<input class="input-mini" type="text" name="daterangepicker_end" value="" disabled="disabled" />' +
                     '</div>' +
-                    '<button class="' + this.applyClass + ' applyBtn" disabled="disabled">' + this.locale.applyLabel + '</button>&nbsp;' +
-                    '<button class="' + this.cancelClass + ' cancelBtn">' + this.locale.cancelLabel + '</button>' +
-                  '</div>' +
+                    '<button class="' + this.applyClass + ' applyBtn" disabled="disabled">' + this.locale.applyLabel + '</button>';
+			        if(this.clearButton){
+			        	DRPTemplate += '&nbsp;<button class="' + this.clearClass + ' clearBtn">' + this.locale.clearLabel + '</button>';
+			        }
+			        if(this.cancelButton){
+			        	DRPTemplate += '&nbsp;<button class="' + this.cancelClass + ' cancelBtn">' + this.locale.cancelLabel + '</button>';
+			        }
+			DRPTemplate += '</div>' +
                 '</div>' +
               '</div>';
 
@@ -298,6 +328,7 @@
         this.container.find('.calendar').on('click', '.prev', $.proxy(this.clickPrev, this));
         this.container.find('.calendar').on('click', '.next', $.proxy(this.clickNext, this));
         this.container.find('.ranges').on('click', 'button.applyBtn', $.proxy(this.clickApply, this));
+        this.container.find('.ranges').on('click', 'button.clearBtn', $.proxy(this.clickClear, this));
         this.container.find('.ranges').on('click', 'button.cancelBtn', $.proxy(this.clickCancel, this));
 
         this.container.find('.ranges').on('click', '.daterangepicker_start_input', $.proxy(this.showCalendars, this));
@@ -371,8 +402,20 @@
         },
 
         notify: function () {
-            this.updateView();
-            this.cb(this.startDate, this.endDate);
+        	/* Using notify from version 1.1 because of clear button.*/
+        	
+            if (!this.cleared) {
+                this.updateView();
+            }
+
+            if (this.element.is('input')) {
+                this.element.val(this.cleared ? '' : this.startDate.format(this.format) + this.separator + this.endDate.format(this.format));
+            }
+            
+            var arg1 = (this.cleared ? null : this.startDate),
+                arg2 = (this.cleared ? null : this.endDate);
+            this.cleared = false;
+            this.cb(arg1, arg2);        
         },
 
         move: function () {
@@ -582,6 +625,12 @@
 
         clickApply: function (e) {
             this.updateInputText();
+            this.hide();
+        },
+        
+        clickClear: function (e) {
+            this.cleared = true;
+            this.notify();
             this.hide();
         },
 
@@ -893,6 +942,7 @@
         this.each(function () {
             var el = $(this);
             if (!el.data('daterangepicker'))
+            	window.console&&console.log("Using custom version of bootstrap-daterangepicker.")
                 el.data('daterangepicker', new DateRangePicker(el, options, cb));
         });
         return this;
