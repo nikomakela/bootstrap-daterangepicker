@@ -19,6 +19,7 @@
         this.minDate = false;
         this.maxDate = false;
         this.dateLimit = false;
+        this.emptyDate = false;
 
         this.showDropdowns = false;
         this.showWeekNumbers = false;
@@ -27,11 +28,9 @@
         this.timePicker12Hour = true;
         this.ranges = {};
         this.opens = 'right';
-
         this.buttonClasses = ['btn', 'btn-small'];
         this.applyClass = 'btn-success';
         this.cancelClass = 'btn-default';
-
         this.format = 'MM/DD/YYYY';
         this.separator = ' - ';
 
@@ -42,6 +41,8 @@
             toLabel: 'To',
             weekLabel: 'W',
             customRangeLabel: 'Custom Range',
+            emptyDateLabel: 'No date set',
+            emptyDateValue: '-',
             daysOfWeek: moment()._lang._weekdaysMin.slice(),
             monthNames: moment()._lang._monthsShort.slice(),
             firstDay: 0
@@ -139,7 +140,14 @@
 
             if (typeof options.maxDate == 'object')
                 this.maxDate = moment(options.maxDate);
-
+            
+            if (typeof options.showDropdowns == 'boolean') {
+                this.emptyDate = options.emptyDate;
+            }
+            
+            if (typeof options.emptyDate == 'string')
+                this.emptyDate = new Boolean(options.emptyDate);
+            
             if (typeof options.ranges == 'object') {
                 for (var range in options.ranges) {
 
@@ -170,6 +178,9 @@
                     list += '<li>' + range + '</li>';
                 }
                 list += '<li>' + this.locale.customRangeLabel + '</li>';
+                if(this.emptyDate){
+                list += '<li>' + this.locale.emptyDateLabel + '</li>';
+                }
                 list += '</ul>';
                 this.container.find('.ranges').prepend(list);
             }
@@ -424,7 +435,7 @@
 
         enterRange: function (e) {
             var label = e.target.innerHTML;
-            if (label == this.locale.customRangeLabel) {
+            if (label == this.locale.customRangeLabel || label == this.locale.emptyDateLabel) {
                 this.updateView();
             } else {
                 var dates = this.ranges[label];
@@ -438,16 +449,38 @@
             this.move();
         },
 
-        updateInputText: function() {
+        updateInputText: function(text) {
+        	
+        	text = text || this.startDate.format(this.format) + this.separator + this.endDate.format(this.format);
+        	
             if (this.element.is('input'))
-                this.element.val(this.startDate.format(this.format) + this.separator + this.endDate.format(this.format));
+                this.element.val(text);
         },
 
         clickRange: function (e) {
             var label = e.target.innerHTML;
             if (label == this.locale.customRangeLabel) {
                 this.showCalendars();
-            } else {
+            }
+            else if (label == this.locale.emptyDateLabel) {
+                this.startDate = moment();
+                this.endDate = moment();
+                
+                if (!this.timePicker) {
+                    this.startDate.startOf('day');
+                    this.endDate.startOf('day');
+                }
+                
+                this.leftCalendar.month.month(this.startDate.month()).year(this.startDate.year()).hour(this.startDate.hour()).minute(this.startDate.minute());
+                this.rightCalendar.month.month(this.endDate.month()).year(this.endDate.year()).hour(this.endDate.hour()).minute(this.endDate.minute());
+                this.updateCalendars();
+                
+                this.updateInputText(this.locale.emptyDateValue);
+
+                this.container.find('.calendar').hide();
+                this.hide();
+            }
+            else {
                 var dates = this.ranges[label];
 
                 this.startDate = dates[0];
