@@ -207,9 +207,9 @@
                 for (var range in this.ranges) {
                     list += '<li>' + range + '</li>';
                 }
-                list += '<li class="customrange">' + this.locale.customRangeLabel + '</li>';
+                list += '<li class="customRange">' + this.locale.customRangeLabel + '</li>';
                 if(this.emptyDate){
-                list += '<li>' + this.locale.emptyDateLabel + '</li>';
+                list += '<li class="emptyDate">' + this.locale.emptyDateLabel + '</li>';
                 }
                 list += '</ul>';
                 this.container.find('.ranges').prepend(list);
@@ -723,7 +723,7 @@
                 i++;
             }
             if (customRange)
-                this.container.find('.ranges li.customrange').addClass('active');
+                this.container.find('.ranges li.customRange').addClass('active');
         },
 
         buildCalendar: function (month, year, hour, minute, side) {
