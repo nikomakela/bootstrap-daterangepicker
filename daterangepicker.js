@@ -207,7 +207,7 @@
                 for (var range in this.ranges) {
                     list += '<li>' + range + '</li>';
                 }
-                list += '<li>' + this.locale.customRangeLabel + '</li>';
+                list += '<li class="customrange">' + this.locale.customRangeLabel + '</li>';
                 if(this.emptyDate){
                 list += '<li>' + this.locale.emptyDateLabel + '</li>';
                 }
@@ -723,7 +723,7 @@
                 i++;
             }
             if (customRange)
-                this.container.find('.ranges li:last').addClass('active');
+                this.container.find('.ranges li.customrange').addClass('active');
         },
 
         buildCalendar: function (month, year, hour, minute, side) {
