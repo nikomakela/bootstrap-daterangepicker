@@ -39,6 +39,7 @@
         this.applyClass = 'btn-success';
         this.cancelClass = 'btn-default';
         this.clearClass = 'btn-warning';
+        this.emptyDateClass = 'emptyDate'
         this.format = 'MM/DD/YYYY';
         this.separator = ' - ';
         this.debug = false;
@@ -222,7 +223,7 @@
                 }
                 list += '<li class="customRange">' + this.locale.customRangeLabel + '</li>';
                 if(this.emptyDate){
-                list += '<li class="emptyDate">' + this.locale.emptyDateLabel + '</li>';
+                list += '<li class="'+this.emptyDateClass+'">' + this.locale.emptyDateLabel + '</li>';
                 }
                 list += '</ul>';
                 this.container.find('.ranges').prepend(list);
@@ -555,7 +556,9 @@
             else if (label == this.locale.emptyDateLabel) {
                 this.updateInputText(this.locale.emptyDateValue);
                 this.container.find('.calendar').hide();
-                this.updateView();
+                this.container.find('.ranges li').removeClass('active');
+                this.container.find('.ranges li.emptyDate').addClass('active');
+
                 this.cb(null, null);
                 this.hide();
             }
@@ -563,6 +566,7 @@
                 if(typeof this.ranges[label][0] == 'string') {
                 	// Selected range is not date but a string
 	                this.updateInputText(this.ranges[label][0]);
+	                this.updateCalendars();
 	                this.cb(null, null);
                 }
                 else {
