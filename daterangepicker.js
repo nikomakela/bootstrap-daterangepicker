@@ -506,21 +506,10 @@
                 this.showCalendars();
             }
             else if (label == this.locale.emptyDateLabel) {
-                this.startDate = moment();
-                this.endDate = moment();
-                
-                if (!this.timePicker) {
-                    this.startDate.startOf('day');
-                    this.endDate.startOf('day');
-                }
-                
-                this.leftCalendar.month.month(this.startDate.month()).year(this.startDate.year()).hour(this.startDate.hour()).minute(this.startDate.minute());
-                this.rightCalendar.month.month(this.endDate.month()).year(this.endDate.year()).hour(this.endDate.hour()).minute(this.endDate.minute());
-                this.updateCalendars();
-                
                 this.updateInputText(this.locale.emptyDateValue);
-
                 this.container.find('.calendar').hide();
+                this.updateView();
+                this.cb(null, null);
                 this.hide();
             }
             else {
