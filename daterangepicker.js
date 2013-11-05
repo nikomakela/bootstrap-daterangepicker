@@ -488,10 +488,12 @@
         },
 
         hide: function (e) {
+        	
         	this.log("Now in hide");
+        	
             this.container.hide();
 
-            if (!this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate))
+            if (this.cleared || (!this.cleared && (!this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate))))
                 this.notify();
 
             this.oldStartDate = this.startDate.clone();
@@ -502,7 +504,9 @@
         },
 
         enterRange: function (e) {
+        	
 //        	this.log("Now in enterRange");
+        	
             var label = e.target.innerHTML;
             if (label == this.locale.customRangeLabel || label == this.locale.emptyDateLabel) {
                 this.updateView();
@@ -515,6 +519,7 @@
 
         showCalendars: function() {
         	this.log("Now in showCalendars");
+        	
             this.container.find('.calendar').show();
             this.move();
         },
@@ -530,6 +535,7 @@
 
         clickRange: function (e) {
         	this.log("Now in clickRange");
+        	
             var label = e.target.innerHTML;
             if (label == this.locale.customRangeLabel) {
                 this.showCalendars();
