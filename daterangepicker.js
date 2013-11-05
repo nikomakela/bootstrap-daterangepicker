@@ -782,6 +782,7 @@
 
             this.container.find('.ranges li').removeClass('active');
             var customRange = true;
+            var customPredefinedRange = null;
             var i = 0;
             for (var range in this.ranges) {
                 if (this.timePicker) {
@@ -789,17 +790,27 @@
                         customRange = false;
                         this.container.find('.ranges li:eq(' + i + ')').addClass('active');
                     }
-                } else {
-                    //ignore times when comparing dates if time picker is not enabled
-                    if (this.startDate.format('YYYY-MM-DD') == this.ranges[range][0].format('YYYY-MM-DD') && this.endDate.format('YYYY-MM-DD') == this.ranges[range][1].format('YYYY-MM-DD')) {
-                        customRange = false;
-                        this.container.find('.ranges li:eq(' + i + ')').addClass('active');
-                    }
+                } 
+                else if(typeof this.ranges[range] == 'string' && this.element.val() == this.ranges[range]){
+                	customPredefinedRange = i;
+               	}
+                
+                //ignore times when comparing dates if time picker is not enabled
+                else if (this.startDate.format('YYYY-MM-DD') == this.ranges[range][0].format('YYYY-MM-DD') && this.endDate.format('YYYY-MM-DD') == this.ranges[range][1].format('YYYY-MM-DD')) {
+                	customRange = false;
+                	this.container.find('.ranges li:eq(' + i + ')').addClass('active');
                 }
                 i++;
             }
-            if (customRange)
+            
+            if (customRange){
                 this.container.find('.ranges li.customRange').addClass('active');
+            }
+            
+            if(customPredefinedRange){
+                this.container.find('.ranges li').removeClass('active');
+            	this.container.find('.ranges li:eq(' + customPredefinedRange + ')').addClass('active');
+            }
         },
 
         buildCalendar: function (month, year, hour, minute, side) {
