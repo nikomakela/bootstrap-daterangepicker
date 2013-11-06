@@ -85,11 +85,17 @@ $('input[name="daterange"]').daterangepicker(
 
 `cancelClass`: (string) CSS class string that will be added to the cancel button
 
+`clearClass`: (string) CSS class string that will be added to the clear button
+
+`emptyDateClass`: (string) CSS class string that will be added to the empty date button
+
 `format`: (string) Date/time format string used by moment when parsing or displaying the selected dates
 
 `separator`: (string) Separator string to display between the start and end date when populating a text input the picker is attached to
 
 `locale`: (object) Allows you to provide localized strings for buttons and labels, and the first day of week for the calendars
+
+`debug`: (boolean) Enable debugging / logging.
 
 ## License
 
